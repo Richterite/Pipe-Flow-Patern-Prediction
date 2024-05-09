@@ -1,72 +1,111 @@
 import numpy as np
-import tensorflow as tf
 import keras
 import gan_module
-from config import DataShape, DIR
-import os
-import vae_module
+from config import DataShape
 import keras
 
+import utils
 
+import keras.backend as K
+
+
+# Lakukan training ulang dengan memasukkan data kosong 
 
 
 if __name__ == "__main__":
+    ## Cek GPU
+    # print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
+
+    ## Cek Time and Memory
+    # import time
+    # import resource
+
+    # Code yang ingin diuji taruh disini
+
+    # time_elapsed = (time.perf_counter() - time_start)
+    # memMb=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss/1024.0/1024.0
+    # print ("\n\tNumerical Method\nElapsed Time %5.1f secs\nMemory Usage: %5.1f MByte\n\n" % (time_elapsed,memMb))
+
+
+
+
     # Cek apakah struktur folder sudah tepat
     # Jika folder tidak ada maka buat folder
-    directory = dir(DIR)[:5]
-    for target in directory:
-        folder = getattr(DIR, target)
-        if not os.path.isdir(folder):
-            os.makedirs(folder)
+    # directory = dir(DIR)[:5]
+    # for target in directory:
+    #     folder = getattr(DIR, target)
+    #     if not os.path.isdir(folder):
+    #         os.makedirs(folder)
     # Uncomment Jika dibutuhkan
     # datagen = NumericalDataGenerator()
     # datagen.generateData(plot_data=True)
 
 
-    # Train GANN
-    gpus = tf.config.experimental.list_physical_devices('GPU')
-    tf.config.experimental.set_memory_growth(gpus[0], True)
-    del gpus
 
-    x_data = np.load("./data/data_step16/x_data_16step.npy")
-    y_data = np.load("./data//data_step16/y_data_16step.npy")
- 
-    # height_array = [8, 12, 16, 20, 24, 28, 32, 36, 40, 44]
+    # Adversarial Autoencoder
+    encoder_weight = "./model_weight/generator/generator_encoder_weight_epoch_750_20240424-103622.h5"
+    decoder_weight = "./model_weight/generator/generator_decoder_weight_epoch_750_20240424-103622.h5"
+    optimizer = keras.optimizers.legacy.RMSprop(momentum=0.2)
+    model = gan_module.AdvAutoencoder(optimizer=optimizer)
+    del encoder_weight
+    del decoder_weight
+    del optimizer
+    # # model.summary()
+    # # model.summary(layer_name="encoder")
+    # # model.summary(layer_name="decoder")
+    # # model.summary(layer_name="discriminator")
 
 
-    datagen = utils.batch_time_series_dataset([x_data, y_data], time_step=DataShape.TIME_STEP, batch_size=DataShape.BATCH_SIZE ,stack_data=True)
 
-    # VAE PRE-TRAIN
-    # encoder = vae_module.vae_encoder()
-    # # print(encoder.summary())
-    # decoder = vae_module.vae_decoder(encoder.layers[-1].output_shape)
-    # # print(decoder.summary())
-    # vae_model = vae_module.vae(encoder, decoder)
-    # vae_model.load_weights('./model_weight/generator/beta_vae_lstm_20231220-083027.h5')
 
-    # y_pred = vae_model(np.expand_dims(datagen[30], axis=0))
-    # print(y_pred.shape)
-    # np.save("hasil_beta_vae.npy", y_pred)
-    # print(vae_model.summary(), flush=True)
-    # vae_module.train_vae(vae_model, datagen, 45)
     
+    # Load data
+    x_data = np.load("./data/data_step16/x_data_16step.npy")
+    y_data = np.load("./data/data_step16/y_data_16step.npy")
 
 
-    ## VAE-GAN TRAINING 
-    # encoder = vae_module.vae_encoder()
-    # decoder = vae_module.vae_decoder(encoder.layers[-1].output_shape)
-    # vae_model = vae_module.vae(encoder, decoder)
-
-    # discriminator_model = gan_module.discriminator()
-    # gan_model = gan_module.gan_model(vae_model, discriminator_model)
-    # gan_module.train_gan(gan_model, datagen, epochs=100)
+    height_variance_list = [number for number in range(8, 44)]
+    height_datagen = np.array([utils.create_height_matrix(height) for height in height_variance_list])
+    datagen = utils.batch_time_series_dataset([x_data, y_data], time_step=DataShape.TIME_STEP, batch_size=DataShape.BATCH_SIZE ,stack_data=True)
+    del height_variance_list
+    del x_data
+    del y_data
 
 
-    ## VAE-GAN MODEL TESTING
-    encoder = vae_module.vae_encoder()
-    decoder = vae_module.vae_decoder(encoder.layers[-1].output_shape)
-    vae_model = vae_module.vae(encoder, decoder)
-    vae_model.load_weights(f'./model_weight/generator/generator_weight_epoch_1.h5')
-    y_pred = vae_model(np.expand_dims(datagen[30], axis=0))
-    utils.plot_streamplot_data(y_pred,height=30, save_plot_to=f"./result penting/video/Generated_result_1.mp4", show_figure=False)
-    np.save(f"hasil_beta_vae_{i}0.npy", y_pred)
+    # Train VAE
+    model.train_model(dataset=datagen, epochs=750, batch_size=3,save_every=10)
+    del model
+    del datagen
+
+
+
+
+    # Single Test
+    # pressure_variance_list = np.arange(0,5, 0.1)
+    # pressure_datagen = np.array([utils.create_pressure_matrix(pressure) for pressure in pressure_variance_list])
+
+    # # Model Test
+    # for i in range(1, 800 + 1):
+    #     CREATE_EVERY = 10
+    #     C_TIME = "20240430-122646"
+    #     if i % CREATE_EVERY == 0 :
+    #         try:
+    #             generator_model = model.build_generator(
+    #                 encoder_weight=f"./model_weight/generator/generator_encoder_weight_epoch_{i}_{C_TIME}.h5", 
+    #                 decoder_weight=f"./model_weight/generator/generator_decoder_weight_epoch_{i}_{C_TIME}.h5"
+    #                 )
+    #             y_pred = generator_model(np.expand_dims(pressure_datagen[30], axis=0))
+    #             np.save(f"hasil_Adv_autoencoder_{i}_epoch_{C_TIME}.npy", y_pred)
+    #             utils.plot_streamplot_data(y_pred, height=30, save_plot_to=f"./result penting/video/hasil_Adv_autoencoder_{i}_epoch_{C_TIME}.mp4", show_figure=False)
+    #         except Exception as e:
+    #             print(e)
+    #             print(f"Weight Epoch-{i} Not Found", flush=True)
+    #         finally:
+    #             K.clear_session()
+    # del model
+    # del generator_model
+    # del y_pred
+
+
+
+  

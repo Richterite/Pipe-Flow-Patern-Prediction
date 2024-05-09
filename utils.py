@@ -153,7 +153,7 @@ def train_validation_split(dataset: np.array, train_size,base_model=None, stacke
         return (x_train, y_train), (x_valid, y_valid)
 
 
-def create_generator(data, base_model=None):
+def create_generator(data, base_model=np.array([])):
     """
     Digunakan untuk membuat sebuah generator yang akan 
     dipakai dalam proses training. Penggunaan generator 
@@ -182,12 +182,33 @@ def create_generator(data, base_model=None):
             for index in n:
                 arr_gen_data = np.expand_dims(data[index], axis=0)
                 
-                if base_model != None:
+                if base_model.any():
                     arr_gen_base = np.expand_dims(base_model[index], axis=0)
                 else:
                     arr_gen_base = None
                 yield arr_gen_data, arr_gen_base
 
+
+def create_pressure_matrix(pressure_value):
+    # Custom encoder channels = 1, custom decoder channels = 2
+    pressure_matrix = np.ones((config.DataShape.TIME_STEP ,config.Const.N_POINTS_Y, config.Const.N_POINTS_X, 2)) * pressure_value
+    pressure_matrix[:,:(config.Const.STEP_HEIGHT_POINTS), config.Const.STEP_WIDTH_POINTS] = 0.0
+    pressure_matrix[:,config.Const.STEP_HEIGHT_POINTS, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+    pressure_matrix[:,:config.Const.STEP_HEIGHT_POINTS, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+    # 1:(STEP_HEIGHT_POINTS + 1), STEP_WIDTH_POINTS
+    return pressure_matrix
+
+
+def create_height_matrix(height):
+    # Custom encoder channels = 1, custom decoder channels = 2
+    pressure_matrix = np.ones((config.DataShape.TIME_STEP ,config.Const.N_POINTS_Y, config.Const.N_POINTS_X, 2))
+    pressure_matrix[:,:height, config.Const.STEP_WIDTH_POINTS] = 0.0
+    pressure_matrix[:,height, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+
+    # Inside
+    pressure_matrix[:,:height, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+    # 1:(STEP_HEIGHT_POINTS + 1), STEP_WIDTH_POINTS
+    return pressure_matrix
 
 def animation_generator(x_data, y_data):
     """
@@ -272,6 +293,8 @@ def plot_streamplot_data(dataset, height, title=None, save_plot_to=None, show_fi
         # anim.save(save_plot_to, writer='imagemagick', fps=1)
     if show_figure:
         plt.show()
+    plt.close()
+    del anim
 
 
 def create_ones(batch_size,time_step, obstacle=False, obstacle_array=None):
