@@ -362,57 +362,7 @@ class AdvAutoencoder():
 
         return Model(data_input, latent_repr, name="encoder")
     
-    # def build_encoder(self):
-    #     initializer = tf.keras.initializers.HeNormal()
-    #     data_input = Input(shape=self.data_shape)
-
-    #     # Encoder 1
-    #     encoder1 = Conv3D(
-    #     filters=2,
-    #     strides=(2,2,2),
-    #     kernel_size=(3,3,3),
-    #     padding="same",
-    #     kernel_initializer=initializer
-    #     )(data_input)
-    #     encoder1 = LeakyReLU(0.2)(encoder1)
-    #     encoder1 = Dropout(0.5)(encoder1)
-
-    #     # Encoder 2
-    #     encoder2 = Conv3D(
-    #             filters=8,
-    #             strides=(2,2,2),
-    #             kernel_size=(3,3,3),
-    #             padding="same",
-    #             kernel_initializer=initializer
-    #         )(encoder1)
-    #     encoder2 = LeakyReLU(0.2)(encoder2)
-    #     encoder2 = Dropout(0.5)(encoder2)
-
-
-    #     # Encoder 3
-    #     encoder3 = ConvLSTM2D(
-    #             filters=16,
-    #             strides=(2,2,2),
-    #             kernel_size=(3,3,3),
-    #             padding="same",
-    #             kernel_initializer=initializer
-    #         )(encoder2)
-    #     encoder3 = LeakyReLU(0.2)(encoder3)
-    #     encoder3 = Dropout(0.5)(encoder3)
-
-    #     x =Flatten()(encoder3)
-    #     mu = Dense(self.latent_dim)(x)
-    #     log_var = Dense(self.latent_dim)(x)
-
-    #     # Inisiasi noise
-    #     sigma = tf.exp(0.5 * log_var)
-    #     epsilon = tf.random.normal(shape=(tf.shape(mu)[0], tf.shape(mu)[1]))
-
-    #     latent_repr = Multiply()([sigma, epsilon])
-    #     latent_repr = Add()([mu, latent_repr])
-
-
-    #     return Model(data_input, latent_repr, name="encoder")
+  
     
     def build_decoder(self):
         model = keras.Sequential(name='decoder')
@@ -422,44 +372,18 @@ class AdvAutoencoder():
         model.add(LeakyReLU(alpha=0.2))
         model.add(Reshape((2,8,32,self.latent_dim)))
         model.add(ConvLSTM2D(32, (3,3), (1,1), return_sequences=True, recurrent_dropout=0.4, padding='same'))
-        # model.add(LeakyReLU(0.2))
-        # model.add(BatchNormalization())
-        # model.add(Dropout(0.5))
+
         model.add(UpSampling3D((2,2,2)))
         model.add(ConvLSTM2D(32, (3,3), (1,1), return_sequences=True, recurrent_dropout=0.4,padding='same'))
-        # model.add(LeakyReLU(0.2))
-        # model.add(BatchNormalization())
-        # model.add(Dropout(0.5))
+
         model.add(UpSampling3D((2,2,2)))
         model.add(ConvLSTM2D(32, (3,3), (1,1), return_sequences=True, recurrent_dropout=0.4,padding='same'))
-        # model.add(LeakyReLU(0.2))
-        # model.add(BatchNormalization())
-        # model.add(Dropout(0.5))
+
         model.add(UpSampling3D((2,2,2)))
         model.add(Conv3DTranspose(2, (1,1,1), (1,1,1), padding='same'))
 
-        # model_input = Input(shape=(self.latent_dim,))
-        # out = model(model_input)
         return model
 
-    # def build_decoder(self):
-    #     model = keras.Sequential(name='decoder')
-    #     model.add(Dense(self.latent_dim, input_shape=(self.latent_dim,)))
-    #     model.add(LeakyReLU(alpha=0.2))
-    #     model.add(Dense(2*8*32*self.latent_dim))
-    #     model.add(LeakyReLU(alpha=0.2))
-    #     model.add(Reshape((2,8,32,self.latent_dim)))
-    #     model.add(Conv3DTranspose(256, (3,3,3), (2,2,2), padding='same'))
-    #     model.add(LeakyReLU(alpha=0.2))
-    #     model.add(Conv3DTranspose(128, (3,3,3), (2,2,2), padding='same'))
-    #     model.add(LeakyReLU(alpha=0.2))
-    #     model.add(Conv3DTranspose(64, (3,3,3), (2,2,2), padding='same'))
-    #     model.add(LeakyReLU(alpha=0.2))
-    #     model.add(Conv3DTranspose(2, (5,5,5), (1,1,1), padding='same'))
-
-    #     # model_input = Input(shape=(self.latent_dim,))
-    #     # out = model(model_input)
-    #     return model
 
     def build_discriminator(self):
         model = keras.Sequential(name="discriminator")
@@ -471,8 +395,6 @@ class AdvAutoencoder():
         model.add(BatchNormalization())
         model.add(Dense(1, activation='sigmoid'))
 
-        # model_input = Input(shape=(self.latent_dim))
-        # out = model(model_input)
 
         return model
         
