@@ -190,6 +190,11 @@ def create_generator(data, base_model=np.array([])):
 
 
 def create_pressure_matrix(pressure_value):
+    """
+    Membuat matriks variasi tekanan yang didasarkan kepada lingkungan kerja pipa
+    @parameter
+    *pressure_value : Int
+    """
     # Custom encoder channels = 1, custom decoder channels = 2
     pressure_matrix = np.ones((config.DataShape.TIME_STEP ,config.Const.N_POINTS_Y, config.Const.N_POINTS_X, 2)) * pressure_value
     pressure_matrix[:,:(config.Const.STEP_HEIGHT_POINTS), config.Const.STEP_WIDTH_POINTS] = 0.0
@@ -200,6 +205,13 @@ def create_pressure_matrix(pressure_value):
 
 
 def create_height_matrix(height):
+    """
+    Membuat matriks variasi ketinggian dengan tekanan konstan disetiap titik
+    pada lingkungan kerja pipa
+
+    @parameter
+    *heighat : Int
+    """
     # Custom encoder channels = 1, custom decoder channels = 2
     pressure_matrix = np.ones((config.DataShape.TIME_STEP ,config.Const.N_POINTS_Y, config.Const.N_POINTS_X, 2))
     pressure_matrix[:,:height, config.Const.STEP_WIDTH_POINTS] = 0.0
@@ -227,6 +239,17 @@ def animation_generator(x_data, y_data):
 
 
 def match_environment(x_generated,y_generated, height, width=config.Const.STEP_WIDTH_POINTS):
+    """
+    Digunakan untuk membuat lingkungan kerja pipa dengan
+    hambatan tanpa aliran air. Variasi ketinggian rintangan
+    diterapkan juga pada fungsi ini.
+    
+    @parameter
+    *x_generated : List
+    *y_generated : List
+    *height : Int
+    width: Int
+    """
     x_generated = np.array(x_generated)
     y_generated = np.array(y_generated)
     for index in range(len(x_generated)):
@@ -326,4 +349,47 @@ def create_ones(batch_size,time_step, obstacle=False, obstacle_array=None):
 
     return base_env_origin
 
-        
+def recall(y_true, y_pred):
+    """
+    recall adalah matriks evaluasi yang digunakan untuk mengukur
+    seberapa sering model mengklasifikasikan true positive dari sampel yang diberikan.
+    semakin besar nilai recall maka semakin baik model dalam
+    mengidentifikasi true positive dari sampel yang diberikan
+
+    @Parameter
+    *y_true : (np.array|List)
+    *y_pred : (np.arrat|List)
+    """
+    true_positive = K.sum(K.round(K.clip(y_true * y_pred, 0,1)))
+    possible_possitive = K.sum(K.round(K.clip(y_true, 0,1)))
+    recall_result = true_positive / (possible_possitive + K.epsilon())
+    return recall_result
+
+def precision(y_true, y_pred):
+    """
+    Precision adalah matriks evaluasi yang digunakan untuk mengukur seberapa sering 
+    model dapat memprediksi hasil yang benar berdasarkan sampel yang diberikan.
+    semakin besar nilai precision maka semakin baik model dalam memprediksi 
+
+    @Parameter
+    *y_true : (np.array|List)
+    *y_pred : (np.arrat|List)
+    """
+    true_positive =  K.sum(K.round(K.clip(y_true * y_pred, 0 , 1)))
+    predicted_positive = K.sum(K.round(K.clip(y_pred, 0, 1)))
+    precision_result = true_positive / (predicted_positive + K.epsilon())
+    return precision_result
+
+def f1_score(y_true, y_pred):
+    """
+    F1 score adalah sebuah matriks evaluasi yang digunakan sebagai tolak ukur
+    baik atau buruknya model, karena F1 score adalah harmonic mean dari recall dan precsion
+    Semakin besar nilai F1 score maka kinerja model semakin baik.
+
+    @Parameter
+    *y_true : (np.array|List)
+    *y_pred : (np.arrat|List)
+    """
+    precision_result = precision(y_true, y_pred)
+    recall_result = recall(y_true, y_pred)
+    return 2*((precision_result *recall_result)/ (precision_result +recall_result+K.epsilon()))

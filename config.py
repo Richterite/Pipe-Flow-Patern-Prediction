@@ -26,7 +26,7 @@ class DataShape:
     ROW : int = 64 
     COL : int = 256 
     CHANNEL : int = 2
-    OBSTACLE_HEIGHT_VARIETY = [num for num in range(8, 45)]
+    OBSTACLE_HEIGHT_VARIETY = [num for num in range(8, 44)]
 
 
 @dataclass
