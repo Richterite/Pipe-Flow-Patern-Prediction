@@ -83,6 +83,22 @@ if __name__ == "__main__":
     # Single Test
     # pressure_variance_list = np.arange(0,5, 0.1)
     # pressure_datagen = np.array([utils.create_pressure_matrix(pressure) for pressure in pressure_variance_list])
+    # height_datagen = np.array([utils.create_pressure_matrix(1, height) for height in height_variance_list])
+
+    # # Model recall, precision, f1
+    # generator_model = model.build_generator(
+    #     encoder_weight='./result penting/generator_encoder_weight_epoch_10_20240425-154117.h5',
+    #     decoder_weight='./result penting/generator_decoder_weight_epoch_10_20240425-154117.h5'
+    #     )
+    # idx = np.random.randint(0, datagen.shape[0], 20)
+    # # print(datagen.dtype)
+    # y_pred = generator_model.predict(height_datagen[idx]).astype('float64')
+    # recall = utils.recall(datagen[idx], y_pred)
+    # precision = utils.precision(datagen[idx], y_pred)
+    # f1_score = utils.f1_score(datagen[idx], y_pred)
+    # print(f"Recall result : {recall}")
+    # print(f"Precision result : {precision}")
+    # print(f"f1 Score result : {f1_score}")
 
     # # Model Test
     # for i in range(1, 800 + 1):
