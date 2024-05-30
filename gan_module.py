@@ -102,6 +102,8 @@ class AdvAutoencoder():
 
         return Model(data_input, latent_repr, name="encoder")
     
+
+
     
     def build_decoder(self):
         model = keras.Sequential(name='decoder')
@@ -120,7 +122,6 @@ class AdvAutoencoder():
         return model
 
 
-
     def build_discriminator(self):
         model = keras.Sequential(name="discriminator")
         model.add(Dense(256, input_shape=(self.latent_dim,)))
@@ -130,6 +131,7 @@ class AdvAutoencoder():
         model.add(LeakyReLU(alpha=0.2))
         model.add(BatchNormalization())
         model.add(Dense(1, activation='sigmoid'))
+
         return model
         
     def summary(self, layer_name =None):
