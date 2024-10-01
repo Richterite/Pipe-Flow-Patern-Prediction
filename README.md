@@ -4,7 +4,9 @@ Final Project for physics undergraduate degree based on Generative Adversarial N
 
 ### Navier-Stokes
 Navier-stokes equation is partial differential equations which describe the motion of viscous fluid substances. The Navier-stokes equation express momentum balance for newtonian fluids and make use of conservation of mass.
-$$ \rho \left ( \frac{\partial \vec{v}}{\partial x} + \vec{v}\cdot \triangledown  \vec{v} \right ) = - \triangledown p+\rho \vec{F} + \mu \triangledown ^{2}\vec{v}$$
+```math
+\rho \left ( \frac{\partial \vec{v}}{\partial t} + \vec{v} \cdot \triangledown \vec{v}  \right ) = - \triangledown p + \rho \vec{F} + \mu \triangledown^{2} \vec{v}
+```
 where $\rho$ is fluid density, $\vec{v}$ is velocity of fluid, $p$ is pressure, $\vec{F}$ is external force, and $\mu $ is kinematic viscosity.
 
 ### Staggered-grid model
@@ -13,12 +15,12 @@ where $\rho$ is fluid density, $\vec{v}$ is velocity of fluid, $p$ is pressure, 
 Staggered grid model is a form of discretization through the formation of grids in the fluid motion space and stores the pressure and velocity components of the fluid separately. This separation aims to avoid oscillations between pressure and velocity when calculating with numerical methods (Blazek, 2015; Sharma, 2017).
 
 ### Model Architecture
-![Model Architecture](./docs/image/model_architecture.png)
+![Model Architecture](./docs/image/model_architecture.jpg)
 <br>
 Autoencoder Architecture combined with Adversarial framework are used for generating synthetic data. For this scenario Autoencoder act as generator. The autoencoder consist of Encoder, Latent space, and decoder. Meanwhile, for adversarial framework comparison step work by compare image from the latent space with real image (Training image).
 <br>
 
-![Model Loss](./docs/image/model_loss.png)
+![Model Loss](./docs/image/model_loss.jpg)
 <br>
 Model Weight tuning (Backpropagation) happen based on two losses, namely reconstruction loss for generator and log loss for discriminator loss. those losses are obtained from the training phase. The training phase have 2 phase, that run sequentially through training processes. 
 * The first phase is to train generator by comparing the generated data by generator with real image (Train data). This checking phase is carried out by discriminator. 
