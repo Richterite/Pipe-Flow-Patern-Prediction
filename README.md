@@ -7,7 +7,7 @@ Navier-stokes equation is partial differential equations which describe the moti
 ```math
 \rho \left ( \frac{\partial \vec{v}}{\partial t} + \vec{v} \cdot \triangledown \vec{v}  \right ) = - \triangledown p + \rho \vec{F} + \mu \triangledown^{2} \vec{v}
 ```
-where $\rho$ is fluid density, $\vec{v}$ is velocity of fluid, $p$ is pressure, $\vec{F}$ is external force, and $\mu $ is kinematic viscosity.
+where $\rho$ is fluid density, $\vec{v}$ is velocity of fluid, $p$ is pressure, $\vec{F}$ is external force, and $\mu$ is kinematic viscosity.
 
 ### Staggered-grid model
 <img src="./docs/image/staggered_grid_model.png" alt="drawing" width="500"/>
@@ -64,7 +64,7 @@ The weight result of model training with 2 session of training (each 750 epochs)
 ## Result Preview
 ![Numerical solution vs generated data](./docs/image/result_compared.gif)
 <br>
-The animation above is the solution of Navier-stokes equation by using Numerical Method. On the other hand, the bottom is generated data by Generative model that have been trained for 2 session training, each 750 epochs
+The animation above is the solution of Navier-stokes equation by using Numerical Method. On the other hand, the bottom animation is generated data by Generative model that have been trained for 2 training sessions, each 750 epochs
 
 ## References
 
