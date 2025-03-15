@@ -5,8 +5,7 @@ import matplotlib.animation as animation
 from tqdm import tqdm
 import os
 
-
-from config import Const, DataShape
+from config.data import Const, DataShape
 # available backends:
 # 'GTK3Agg', 'GTK3Cairo', 'GTK4Agg', 'GTK4Cairo', 'MacOSX',
 # 'nbAgg', 'QtAgg', 'QtCairo', 'Qt5Agg', 'Qt5Cairo', 'TkAgg',
