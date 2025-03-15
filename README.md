@@ -17,7 +17,7 @@ Staggered grid model is a form of discretization through the formation of grids 
 ### Model Architecture
 ![Model Architecture](./docs/image/model_architecture.jpg)
 <br>
-Autoencoder Architecture combined with Adversarial framework are used for generating synthetic data. For this scenario Autoencoder act as generator. The autoencoder consist of Encoder, Latent space, and decoder. Meanwhile, for adversarial framework comparison step work by compare image from the latent space with real image (Training image).
+Autoencoder Architecture combined with Adversarial framework are used for generating synthetic data. For this scenario Autoencoder act as generator. The autoencoder consist of Encoder, Latent space, and decoder. Meanwhile, for adversarial framework comparison step work by compare image from the latent space with real image (Training image). Please refer to `docs/image/tensorflow_model_structure.png' for better visualization regarding type of the layer.
 <br>
 
 ![Model Loss](./docs/image/model_loss.jpg)
@@ -42,12 +42,13 @@ Python Version 3.8.10
 
 | Filename  | Description |
 | ------------- | ------------- | 
-| `main.py`  | Main Program file to initiate the program |
-| `config.py`  | File for defining constant value for calculating, training, and dataset shape  |
-| `custom.py`  | Custom training function file for model training purpose |
-| `data_generator.py`  | Generating numerical dataset of Navier-stokes solution and convert to csv or picture  |
-| `gan_module.py`  | Generative Adversarial Network (GANs) model Architecture and model training |
-| `utils.py`  | Utility functions |
+| `src/main.py`  | Main Program file to initiate the program |
+| `src/config/data.py`  | define all constant for the data  |
+| `src/config/model.py`  | define all constant for the model  |
+| `src/model/custom_loss.py`  | Custom training function file for model training purpose |
+| `src/model/gan_module.py`  | Generative Adversarial Network (GANs) model Architecture and model training |
+| `src/generator/data_generator.py`  | Generating numerical dataset of Navier-stokes solution and convert to csv or picture  |
+| `src/utility/utils.py`  | Utility functions and help function to help data and model development |
 
 
 ## :pushpin: Dataset and Model Weight
