@@ -64,7 +64,7 @@ The weight result of model training with 2 session of training (each 750 epochs)
 ## Result Preview
 ![Numerical solution vs generated data](./docs/image/result_compared.gif)
 <br>
-The animation above is the solution of Navier-stokes equation by using Numerical Method. On the other hand, the bottom animation is generated data by Generative model that have been trained for 2 training sessions, each 750 epochs. The results are far from perfect imitation due to limited computing resources, hence the exploration of Machine Learning models also limited.
+The animation above is the solution of Navier-stokes equation by using Numerical Method. On the other hand, the bottom animation is generated data by Generative model that have been trained for 2 training sessions, each 750 epochs. The results are far from perfect imitation due to limited computing resources, hence the exploration of Machine Learning models also limited. Model evaluation for this model are Recall = 79.07%; Precision = 82.55% and F1 Score = 80.78%.
 
 ## References
 
