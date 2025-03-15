@@ -10,7 +10,8 @@ from keras.layers import Input, Flatten, Multiply, Add, Reshape, UpSampling3D, B
 from keras import Model
 from keras.optimizers.legacy import Adam
 
-from config import DataShape, DIR
+from config.data import DataShape
+from config.model import DIR
 
 
 class AdvAutoencoder():
