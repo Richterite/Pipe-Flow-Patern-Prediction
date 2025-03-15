@@ -17,7 +17,12 @@ Staggered grid model is a form of discretization through the formation of grids 
 ### Model Architecture
 ![Model Architecture](./docs/image/model_architecture.jpg)
 <br>
-Autoencoder Architecture combined with Adversarial framework are used for generating synthetic data. For this scenario Autoencoder act as generator. The autoencoder consist of Encoder, Latent space, and decoder. Meanwhile, for adversarial framework comparison step work by compare image from the latent space with real image (Training image). Please refer to `docs/image/tensorflow_model_structure.png' for better visualization regarding type of the layer.
+Autoencoder Architecture combined with Adversarial framework are used for generating synthetic data. For this scenario Autoencoder act as generator. 
+<br>
+
+![Model Architecture Layer Type](./docs/image/tensorflow_model_structure.png)
+
+The autoencoder consist of Encoder, Latent space, and decoder. Meanwhile, for adversarial framework comparison step work by compare image from the latent space with real image (Training image).
 <br>
 
 ![Model Loss](./docs/image/model_loss.jpg)
