@@ -3,7 +3,8 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from data_generator import NumericalDataGenerator
-import config
+from config.data import DataShape, Const
+from tensorflow.python.framework.convert_to_constants import convert_variables_to_constants_v2_as_graph
 
 
 # Setting seed untuk randomisasi yang akan digunakan
@@ -196,10 +197,10 @@ def create_pressure_matrix(pressure_value):
     *pressure_value : Int
     """
     # Custom encoder channels = 1, custom decoder channels = 2
-    pressure_matrix = np.ones((config.DataShape.TIME_STEP ,config.Const.N_POINTS_Y, config.Const.N_POINTS_X, 2)) * pressure_value
-    pressure_matrix[:,:(config.Const.STEP_HEIGHT_POINTS), config.Const.STEP_WIDTH_POINTS] = 0.0
-    pressure_matrix[:,config.Const.STEP_HEIGHT_POINTS, :config.Const.STEP_WIDTH_POINTS ] = 0.0
-    pressure_matrix[:,:config.Const.STEP_HEIGHT_POINTS, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+    pressure_matrix = np.ones((DataShape.TIME_STEP ,Const.N_POINTS_Y, Const.N_POINTS_X, 2)) * pressure_value
+    pressure_matrix[:,:(Const.STEP_HEIGHT_POINTS), Const.STEP_WIDTH_POINTS] = 0.0
+    pressure_matrix[:,Const.STEP_HEIGHT_POINTS, :Const.STEP_WIDTH_POINTS ] = 0.0
+    pressure_matrix[:,:Const.STEP_HEIGHT_POINTS, :Const.STEP_WIDTH_POINTS ] = 0.0
     # 1:(STEP_HEIGHT_POINTS + 1), STEP_WIDTH_POINTS
     return pressure_matrix
 
@@ -213,12 +214,12 @@ def create_height_matrix(height):
     *heighat : Int
     """
     # Custom encoder channels = 1, custom decoder channels = 2
-    pressure_matrix = np.ones((config.DataShape.TIME_STEP ,config.Const.N_POINTS_Y, config.Const.N_POINTS_X, 2))
-    pressure_matrix[:,:height, config.Const.STEP_WIDTH_POINTS] = 0.0
-    pressure_matrix[:,height, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+    pressure_matrix = np.ones((DataShape.TIME_STEP ,Const.N_POINTS_Y, Const.N_POINTS_X, 2))
+    pressure_matrix[:,:height, Const.STEP_WIDTH_POINTS] = 0.0
+    pressure_matrix[:,height, :Const.STEP_WIDTH_POINTS ] = 0.0
 
     # Inside
-    pressure_matrix[:,:height, :config.Const.STEP_WIDTH_POINTS ] = 0.0
+    pressure_matrix[:,:height, :Const.STEP_WIDTH_POINTS ] = 0.0
     # 1:(STEP_HEIGHT_POINTS + 1), STEP_WIDTH_POINTS
     return pressure_matrix
 
@@ -238,7 +239,7 @@ def animation_generator(x_data, y_data):
         yield x_gen, y_gen
 
 
-def match_environment(x_generated,y_generated, height, width=config.Const.STEP_WIDTH_POINTS):
+def match_environment(x_generated,y_generated, height, width=Const.STEP_WIDTH_POINTS):
     """
     Digunakan untuk membuat lingkungan kerja pipa dengan
     hambatan tanpa aliran air. Variasi ketinggian rintangan
@@ -272,7 +273,7 @@ def plot_streamplot_data(dataset, height, title=None, save_plot_to=None, show_fi
     # Pastikan dataset bukanlah data batch
     assert dataset.shape[0] == 1
     dataset = np.squeeze(dataset, axis=0)
-    assert dataset.shape[0] == config.DataShape.TIME_STEP
+    assert dataset.shape[0] == DataShape.TIME_STEP
 
     fig, ax = plt.subplots(figsize=(15, 10))
     obj = NumericalDataGenerator(get_att_only=True)
@@ -306,7 +307,7 @@ def plot_streamplot_data(dataset, height, title=None, save_plot_to=None, show_fi
             y_gen
         )
     
-    anim = animation.FuncAnimation(fig, animate, frames=config.DataShape.TIME_STEP-1, repeat=False)
+    anim = animation.FuncAnimation(fig, animate, frames=DataShape.TIME_STEP-1, repeat=False)
     if save_plot_to != None:
         # Save as video
         video_writer = animation.FFMpegWriter(fps=1)
@@ -332,19 +333,19 @@ def create_ones(batch_size,time_step, obstacle=False, obstacle_array=None):
     obstacle: boolean
     obstacle_array: List
     """
-    base_env_origin = np.ones((batch_size, time_step, config.DataShape.ROW, config.DataShape.COL, config.DataShape.CHANNEL))
+    base_env_origin = np.ones((batch_size, time_step, DataShape.ROW, DataShape.COL, DataShape.CHANNEL))
 
     if obstacle:
         assert obstacle_array != None
         for batch_index in range(batch_size):
             # Origin Shape
-            base_env_origin[batch_index,:,1:obstacle_array[batch_index] +1, config.Const.STEP_WIDTH_POINTS ,:] = 0.0
-            base_env_origin[batch_index,:,:obstacle_array[batch_index], :config.Const.STEP_WIDTH_POINTS,:] = 0.0
+            base_env_origin[batch_index,:,1:obstacle_array[batch_index] +1, Const.STEP_WIDTH_POINTS ,:] = 0.0
+            base_env_origin[batch_index,:,:obstacle_array[batch_index], :Const.STEP_WIDTH_POINTS,:] = 0.0
 
             # Custom Shape
             # base_env_custom[batch_index,:,:obstacle_array[batch_index] + 1,:,:] = 0.0
-            # base_env_custom[batch_index,:,1:obstacle_array[batch_index] +1, config.Const.STEP_WIDTH_POINTS ,:] = 0.0
-            # base_env_custom[batch_index,:,:obstacle_array[batch_index], :config.Const.STEP_WIDTH_POINTS,:] = 0.0
+            # base_env_custom[batch_index,:,1:obstacle_array[batch_index] +1, Const.STEP_WIDTH_POINTS ,:] = 0.0
+            # base_env_custom[batch_index,:,:obstacle_array[batch_index], :.Const.STEP_WIDTH_POINTS,:] = 0.0
 
 
     return base_env_origin
@@ -416,9 +417,6 @@ def get_flops(model, model_inputs) -> float:
                 "`tf.keras.Model` and `tf.keras.Sequential` instances."
             )
 
-        from tensorflow.python.framework.convert_to_constants import (
-            convert_variables_to_constants_v2_as_graph,
-        )
 
         # Compute FLOPs for one sample
         batch_size = 1
