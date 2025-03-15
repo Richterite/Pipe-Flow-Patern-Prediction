@@ -1,12 +1,10 @@
 import numpy as np
 import keras
+import keras.backend as K
 import gan_module
-from config import DataShape
-import keras
+from config.data import DataShape
 
 import utils
-
-import keras.backend as K
 
 
 # Lakukan training ulang dengan memasukkan data kosong 
